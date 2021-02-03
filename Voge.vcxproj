@@ -6,8 +6,8 @@
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{cc9e110d-2186-45fa-80e6-e47f7276a398}</ProjectGuid>
-    <ProjectName>DxUWP</ProjectName>
-    <RootNamespace>DxUWP</RootNamespace>
+    <ProjectName>Voge</ProjectName>
+    <RootNamespace>Voge</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
