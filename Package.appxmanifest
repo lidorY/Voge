@@ -6,7 +6,7 @@
     Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="ffcfbd00-4963-4c3a-b20d-867d0d6e3d07" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
   <Properties>
-    <DisplayName>DxUWP</DisplayName>
+    <DisplayName>Voge</DisplayName>
     <PublisherDisplayName>User</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -17,8 +17,8 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="DxUWP.App">
-      <uap:VisualElements DisplayName="DxUWP" Description="SImple DirectX based game"
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Voge.App">
+      <uap:VisualElements DisplayName="Voxel Game Experience" Description="SImple DirectX based game"
         Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" BackgroundColor="transparent">
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
         <uap:DefaultTile/>
