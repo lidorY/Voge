@@ -9,9 +9,8 @@
 // How should we use it 
 class DeviceResources {
 public:
-	// Make Device Resources upon Construction
 	DeviceResources() {}
-	// Somewhat initialization related function
+
 	void SetWindow(winrt::Windows::UI::Core::CoreWindow const& window) {}
 
 	// Suspension Acions -- Trim
@@ -25,5 +24,18 @@ public:
 	void ValidateDevice() {}
 
 private:
+	// Device creation and initialization inner methods
+	void CreateDeviceIndependantResources() {}
+	void CreateDeviceREsources() {}
+	void CreateWindowSizeDependantResources() {}
+
+
+	// D3d member vlaues
+	winrt::com_ptr<ID3D11Device3> device_;
+	winrt::com_ptr<ID3D11DeviceContext3> context_;
+	// TODO: why not use swap chain 2?
+	winrt::com_ptr<IDXGISwapChain1>  swap_chain_;
+
+
 
 };

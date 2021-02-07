@@ -78,10 +78,11 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
     void SetWindow(CoreWindow const& window)
     {
         // Define the cursor shape
-        window.PointerCursor(CoreCursor(CoreCursorType::Hand, 0));
-        PointerVisualizationSettings visualizationSettings{ PointerVisualizationSettings::GetForCurrentView() };
-        visualizationSettings.IsContactFeedbackEnabled(false);
-        visualizationSettings.IsBarrelButtonFeedbackEnabled(false);
+        window.PointerCursor(CoreCursor(CoreCursorType::Arrow, 0));
+        // TODO: Those stuff doesn't seem to be really necessary..
+        //PointerVisualizationSettings visualizationSettings{ PointerVisualizationSettings::GetForCurrentView() };
+        //visualizationSettings.IsContactFeedbackEnabled(false);
+        //visualizationSettings.IsBarrelButtonFeedbackEnabled(false);
         // Set the device resources window
         device_resources_->SetWindow(window);
 
