@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="device_resources.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

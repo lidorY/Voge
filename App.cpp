@@ -2,6 +2,7 @@
 
 // Standard library includes
 #include <memory>
+#include "device_resources.h"
 
 
 using namespace winrt;
@@ -22,17 +23,8 @@ using namespace winrt::Windows::UI::Input;
 
 struct App : implements<App, IFrameworkViewSource, IFrameworkView>
 {
-    //CompositionTarget m_target{ nullptr };
-    //VisualCollection m_visuals{ nullptr };
-    //Visual m_selected{ nullptr };
-    //float2 m_offset{};
 
-    //std::shared_ptr<DX::DeviceResources> device_resources_;
-
-    IFrameworkView CreateView()
-    {
-        return *this;
-    }
+    IFrameworkView CreateView() { return *this; }
 
     // ----------------------------------------------------------------
     // Core Application View stuff
@@ -44,7 +36,7 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
         CoreApplication::Resuming({ this, &App::OnResuming });
 
         // Initialize device resources 
-        //      device_resources_ = std::make_shared<DX::DeviceResources>();
+        device_resources_ = std::make_shared<DeviceResources>();
     }
 
     void OnActivated(CoreApplicationView const& /* applicationView */, IActivatedEventArgs const& /* args */)
@@ -63,7 +55,7 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
         co_await winrt::resume_background();
 
         // Suspending action of the device resources
-        //      m_deviceResources->Trim();
+        device_resources_->Trim();
         // Suspending action of the main game loop
         //      m_main->Suspend();
 
@@ -86,13 +78,12 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
     void SetWindow(CoreWindow const& window)
     {
         // Define the cursor shape
-        // TODO: Why isn't this working..?
-        window.PointerCursor(CoreCursor(CoreCursorType::Arrow, 0));
+        window.PointerCursor(CoreCursor(CoreCursorType::Hand, 0));
         PointerVisualizationSettings visualizationSettings{ PointerVisualizationSettings::GetForCurrentView() };
         visualizationSettings.IsContactFeedbackEnabled(false);
         visualizationSettings.IsBarrelButtonFeedbackEnabled(false);
         // Set the device resources window
-        //      m_deviceResources->SetWindow(window);
+        device_resources_->SetWindow(window);
 
         // Register window related events callbacks
         window.Activated({ this, &App::OnWindowActivationChanged });
@@ -103,8 +94,6 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
         // Register and set display information
         DisplayInformation currentDisplayInformation{ DisplayInformation::GetForCurrentView() };
         currentDisplayInformation.DpiChanged({ this, &App::OnDpiChanged });
-        currentDisplayInformation.OrientationChanged({ this, &App::OnOrientationChanged });
-        currentDisplayInformation.StereoEnabledChanged({ this, &App::OnStereoEnabledChanged });
         DisplayInformation::DisplayContentsInvalidated({ this, &App::OnDisplayContentsInvalidated });
     }
 
@@ -117,7 +106,7 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
     void OnWindowSizeChanged(CoreWindow const& /* window */, WindowSizeChangedEventArgs const& args)
     {
         // Update Change size in main loop and device resources
-        //      m_deviceResources->SetLogicalSize(args.Size());
+        device_resources_->SetLogicalSize(args.Size());
         //      m_main->CreateWindowSizeDependentResources();
     }
 
@@ -136,28 +125,14 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
     void OnDpiChanged(DisplayInformation const& sender, IInspectable const& /* args */)
     {
         // Add support in device resources and main game loop for dpi change event
-        //      m_deviceResources->SetDpi(sender.LogicalDpi());
-        //      m_main->CreateWindowSizeDependentResources();
-    }
-
-    void OnOrientationChanged(DisplayInformation const& sender, IInspectable const& /* args */)
-    {
-        // TODO: Non mobile game - no orientation support should be here..
-        //      m_deviceResources->SetCurrentOrientation(sender.CurrentOrientation());
-        //      m_main->CreateWindowSizeDependentResources();
-    }
-
-    void OnStereoEnabledChanged(DisplayInformation const& /* sender */, IInspectable const& /* args */)
-    {
-        // TODO: stereo support? maybe only relevant for VR/AR?
-        //      m_deviceResources->UpdateStereoState();
+        device_resources_->SetDpi(sender.LogicalDpi());
         //      m_main->CreateWindowSizeDependentResources();
     }
 
     void OnDisplayContentsInvalidated(DisplayInformation const& /* sender */, IInspectable const& /* args */)
     {   
-        // TODO: What's this for?
-        //      m_deviceResources->ValidateDevice();
+        // Occurs when the display requires redrawing
+        device_resources_->ValidateDevice();
     }
 
     // -----------------------------------------------------------------
@@ -189,7 +164,8 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
 
 
     private:
-        //std::shared_ptr<DX::DeviceResources> m_deviceResources;
+
+        std::shared_ptr<DeviceResources> device_resources_;
         //winrt::com_ptr<GameMain> m_main;
 };
 
