@@ -51,7 +51,6 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
     {
         CoreWindow window = CoreWindow::GetForCurrentThread();
         window.Activate();
-
     }
 
     winrt::fire_and_forget OnSuspending(IInspectable const& /* sender */, SuspendingEventArgs const& args) {
