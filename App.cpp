@@ -2,8 +2,9 @@
 
 // Standard library includes
 #include <memory>
-#include "device_resources.h"
 
+#include "device_resources.h"
+#include "engine.h"
 
 using namespace winrt;
 
@@ -141,33 +142,25 @@ struct App : implements<App, IFrameworkViewSource, IFrameworkView>
 
     void Load(hstring const&)
     {
-        // Loading mechanism of the main game loop
-        /*
-        * if (!m_main)
+        if (!engine_)
         {
-            m_main = winrt::make_self<GameMain>(m_deviceResources);
-        }
-        */
+            //engine_ = winrt::make_self<Engine>(device_resources_);
+            engine_ = std::make_unique<Engine>(device_resources_);
+        }        
     }
 
     void Uninitialize()
     {
     }
 
-    void Run(){
-        // Calling main game loop run
-        //      m_main->Run();
-                // TODO: what is this dispatcher and what do we need it for?
-        CoreWindow window = CoreWindow::GetForCurrentThread();
-        CoreDispatcher dispatcher = window.Dispatcher();
-        dispatcher.ProcessEvents(CoreProcessEventsOption::ProcessUntilQuit);
-    }
+    void Run(){ engine_->Run();}
 
 
     private:
 
         std::shared_ptr<DeviceResources> device_resources_;
-        //winrt::com_ptr<GameMain> m_main;
+        //winrt::com_ptr<Engine> engine_;
+        std::unique_ptr<Engine> engine_;
 };
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
