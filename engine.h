@@ -6,6 +6,22 @@
 
 #include "device_resources.h"
 
+enum class UpdateEngineState {
+	WaitingForResources,
+	ResourcesLoaded,
+	//WaitingForPress,
+	Dynamics,
+	TooSmall,
+	Suspended,
+	Deactivated,
+};
+
+enum class GameInfoOverlayState {
+	Loading,
+	GameStats,
+	Pause,
+};
+
 //class Engine : public winrt::implements<Engine, winrt::Windows::Foundation::IInspectable> {
 class Engine{
 public:
@@ -32,6 +48,10 @@ public:
 		while (!window_closed_) {
 			if (visible_) {
 				dispatcher.ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+				Update();
+				// TODO: renderer_->Render();
+				device_resources_->Present();
+				render_needed_ = false;
 			}
 			else {
 				dispatcher.ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
@@ -39,6 +59,8 @@ public:
 		}
 	}
 
+
+	void Update() {}
 	//void Suspend() {}
 	//void Resume() {}
 	
@@ -50,6 +72,10 @@ public:
 	void Close() { window_closed_ = true; }
 
 	std::shared_ptr<DeviceResources> device_resources_;
+	
 	bool window_closed_;
 	bool visible_;
+	bool render_needed_;
+
+	UpdateEngineState update_state_;
 };
