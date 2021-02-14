@@ -4,10 +4,6 @@
 #include <winrt/Windows.UI.Core.h>
 
 
-
-// Classs intention
-// How should we use it
-
 interface IDeviceNotify
 {
 	virtual void OnDeviceLost() = 0;
@@ -16,9 +12,24 @@ interface IDeviceNotify
 
 class DeviceResources {
 public:
-	DeviceResources() {}
+	DeviceResources() noexcept :
+		screen_viewport_(),
+		feature_level_(D3D_FEATURE_LEVEL_11_0),
+		render_target_size_(),
+		output_size_(),
+		logical_size_(),
+		dpi_(-1.0f),
+		device_notify_(nullptr) 
+	{
+		CreateDeviceIndependentResources();
+		CreateDeviceResources();
+	}
 
-	void SetWindow(winrt::Windows::UI::Core::CoreWindow const& window) {}
+	void SetWindow(winrt::Windows::UI::Core::CoreWindow const& window) {
+		DisplayInformation currentDisplayInformation = DisplayInformation::GetForCurrentView();		
+		window_ = window;
+		SetDpi(currentDisplayInformation.LogicalDpi());
+	}
 
 	// Suspension Acions -- Trim
 	// TODO: What does this Trimming means?
@@ -26,11 +37,73 @@ public:
 	// Swap Chain presention
 	void Present() {}
 
-	void SetLogicalSize(winrt::Windows::Foundation::Size logicalSize) {}
-	void SetDpi(float dpi) {}
-	void ValidateDevice() {}
+	void SetLogicalSize(winrt::Windows::Foundation::Size logicalSize) {
+		if (logical_size_ == logicalSize) { return; }
+
+		logical_size_ = logicalSize;
+		CreateWindowSizeDependentResources();
+	}
+
+	void SetDpi(float dpi) {
+		if (dpi_ == dpi) { return; }
+		
+		dpi_ = dpi;
+		SetLogicalSize(winrt::Windows::Foundation::Size(
+			window_.get().Bounds().Width,
+			window_.get().Bounds().Height
+		));
+	}
+
+	void ValidateDevice() {
+		// The D3D Device is no longer valid if the default adapter changed since the device
+		// was created or if the device has been removed.
+
+		// First, get the information for the default adapter from when the device was created.
+		winrt::com_ptr<IDXGIDevice3> dxgi_device = device_.as<IDXGIDevice3>();
+		winrt::com_ptr<IDXGIAdapter> device_adapter;
+		winrt::check_hresult(dxgi_device->GetAdapter(device_adapter.put()));
+		winrt::com_ptr<IDXGIFactory2> device_factory;
+		winrt::check_hresult(device_adapter->GetParent(IID_PPV_ARGS(&device_factory)));
+		winrt::com_ptr<IDXGIAdapter1> previous_default_adapter;
+		winrt::check_hresult(device_factory->EnumAdapters1(0, previous_default_adapter.put()));
+
+
+		DXGI_ADAPTER_DESC previous_desc;
+		winrt::check_hresult(previous_default_adapter->GetDesc(&previous_desc));
+
+		// Next, get the information for the current default adapter.
+		winrt::com_ptr<IDXGIFactory2> current_factory;
+		winrt::check_hresult(CreateDXGIFactory1(IID_PPV_ARGS(&current_factory)));
+		winrt::com_ptr<IDXGIAdapter1> current_default_adapter;
+		winrt::check_hresult(current_factory->EnumAdapters1(0, current_default_adapter.put()));
+
+
+		DXGI_ADAPTER_DESC current_desc;
+		winrt::check_hresult(current_default_adapter->GetDesc(&current_desc));
+
+
+		if(previous_desc.AdapterLuid.LowPart != current_desc.AdapterLuid.LowPart ||
+			previous_desc.AdapterLuid.HighPart != current_desc.AdapterLuid.HighPart ||
+			FAILED(device_->GetDeviceRemovedReason()))
+		{
+			// TODO: this implies we need to release the refernces
+			// before we call HandleDeviceLost. Is this true or just error in code?
+
+			// Release references to resources related to the old device.
+			dxgi_device = nullptr;
+			device_adapter = nullptr;
+			device_factory = nullptr;
+			previous_default_adapter = nullptr;
+
+			// Create a new device and swap chain.
+			HandleDeviceLost();
+		}
+	}
 	void HandleDeviceLost() {}
-	void RegisterDeviceNotify(IDeviceNotify* deviceNotify) {}
+
+	void RegisterDeviceNotify(IDeviceNotify* deviceNotify) {
+		device_notify_ = deviceNotify;
+	}
 
 	// Device Accessors.
 	winrt::Windows::Foundation::Size GetOutputSize() const { return output_size_; }
@@ -49,9 +122,9 @@ public:
 
 private:
 	// Device creation and initialization inner methods
-	void CreateDeviceIndependantResources() {}
-	void CreateDeviceREsources() {}
-	void CreateWindowSizeDependantResources() {}
+	void CreateDeviceIndependentResources() {}
+	void CreateDeviceResources() {}
+	void CreateWindowSizeDependentResources() {}
 
 
 	// Direct3D objects.
@@ -76,5 +149,5 @@ private:
 	float dpi_;
 
 	// The IDeviceNotify can be held directly as it owns the DeviceResources.
-	IDeviceNotify* m_deviceNotify; 
+	IDeviceNotify* device_notify_; 
 };
