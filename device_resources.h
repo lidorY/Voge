@@ -81,6 +81,8 @@ using namespace winrt::Windows::UI::Core;
 
 			// First, get the information for the default adapter from when the device was created.
 
+			//TODO: DXGI convertion problem
+
 			//winrt::com_ptr<IDXGIDevice3> dxgi_device;
 			//dxgi_device = mdevice_.as<IDXGIDevice3>();
 			//winrt::com_ptr<IDXGIAdapter> device_adapter;
