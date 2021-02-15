@@ -13,8 +13,7 @@ void DeviceResources::Trim() {
 
 	
 	winrt::com_ptr<IDXGIDevice3> dxgi_device;
-	mdevice_->QueryInterface(__uuidof(IDXGIDevice3), (void**)&dxgi_device);
-	//dxgi_device = mdevice_.as<IDXGIDevice3>();
+	dxgi_device = mdevice_.as<IDXGIDevice3>();
 
 	dxgi_device->Trim();
 }
