@@ -81,48 +81,48 @@ using namespace winrt::Windows::UI::Core;
 
 			// First, get the information for the default adapter from when the device was created.
 
-			//TODO: DXGI convertion problem
-
-			//winrt::com_ptr<IDXGIDevice3> dxgi_device;
+			winrt::com_ptr<IDXGIDevice3> dxgi_device;
+			// This conversion doesn't seem to work..
 			//dxgi_device = mdevice_.as<IDXGIDevice3>();
-			//winrt::com_ptr<IDXGIAdapter> device_adapter;
-			//winrt::check_hresult(dxgi_device->GetAdapter(device_adapter.put()));
-			//winrt::com_ptr<IDXGIFactory2> device_factory;
-			//winrt::check_hresult(device_adapter->GetParent(IID_PPV_ARGS(&device_factory)));
-			//winrt::com_ptr<IDXGIAdapter1> previous_default_adapter;
-			//winrt::check_hresult(device_factory->EnumAdapters1(0, previous_default_adapter.put()));
+			mdevice_->QueryInterface(__uuidof(IDXGIDevice3), (void**)&dxgi_device);
+			winrt::com_ptr<IDXGIAdapter> device_adapter;
+			winrt::check_hresult(dxgi_device->GetAdapter(device_adapter.put()));
+			winrt::com_ptr<IDXGIFactory2> device_factory;
+			winrt::check_hresult(device_adapter->GetParent(IID_PPV_ARGS(&device_factory)));
+			winrt::com_ptr<IDXGIAdapter1> previous_default_adapter;
+			winrt::check_hresult(device_factory->EnumAdapters1(0, previous_default_adapter.put()));
 
 
-			//DXGI_ADAPTER_DESC previous_desc;
-			//winrt::check_hresult(previous_default_adapter->GetDesc(&previous_desc));
+			DXGI_ADAPTER_DESC previous_desc;
+			winrt::check_hresult(previous_default_adapter->GetDesc(&previous_desc));
 
-			//// Next, get the information for the current default adapter.
-			//winrt::com_ptr<IDXGIFactory2> current_factory;
-			//winrt::check_hresult(CreateDXGIFactory1(IID_PPV_ARGS(&current_factory)));
-			//winrt::com_ptr<IDXGIAdapter1> current_default_adapter;
-			//winrt::check_hresult(current_factory->EnumAdapters1(0, current_default_adapter.put()));
-
-
-			//DXGI_ADAPTER_DESC current_desc;
-			//winrt::check_hresult(current_default_adapter->GetDesc(&current_desc));
+			// Next, get the information for the current default adapter.
+			winrt::com_ptr<IDXGIFactory2> current_factory;
+			winrt::check_hresult(CreateDXGIFactory1(IID_PPV_ARGS(&current_factory)));
+			winrt::com_ptr<IDXGIAdapter1> current_default_adapter;
+			winrt::check_hresult(current_factory->EnumAdapters1(0, current_default_adapter.put()));
 
 
-			//if (previous_desc.AdapterLuid.LowPart != current_desc.AdapterLuid.LowPart ||
-			//	previous_desc.AdapterLuid.HighPart != current_desc.AdapterLuid.HighPart ||
-			//	FAILED(mdevice_->GetDeviceRemovedReason()))
-			//{
-			//	// TODO: this implies we need to release the refernces
-			//	// before we call HandleDeviceLost. Is this true or just error in code?
+			DXGI_ADAPTER_DESC current_desc;
+			winrt::check_hresult(current_default_adapter->GetDesc(&current_desc));
 
-			//	// Release references to resources related to the old device.
-			//	dxgi_device = nullptr;
-			//	device_adapter = nullptr;
-			//	device_factory = nullptr;
-			//	previous_default_adapter = nullptr;
 
-			//	// Create a new device and swap chain.
-			//	HandleDeviceLost();
-			//}
+			if (previous_desc.AdapterLuid.LowPart != current_desc.AdapterLuid.LowPart ||
+				previous_desc.AdapterLuid.HighPart != current_desc.AdapterLuid.HighPart ||
+				FAILED(mdevice_->GetDeviceRemovedReason()))
+			{
+				// TODO: this implies we need to release the refernces
+				// before we call HandleDeviceLost. Is this true or just error in code?
+
+				// Release references to resources related to the old device.
+				dxgi_device = nullptr;
+				device_adapter = nullptr;
+				device_factory = nullptr;
+				previous_default_adapter = nullptr;
+
+				// Create a new device and swap chain.
+				HandleDeviceLost();
+			}
 		}
 
 		void HandleDeviceLost() {
