@@ -63,9 +63,9 @@ public:
 		// Discard the contents of the render target.
 		// This is a valid operation only when the existing contents will be entirely
 		// overwritten. If dirty or scroll rects are used, this call should be removed.
-		context_->DiscardView(render_target_view_.get());
+		//context_->DiscardView(render_target_view_.get());
 		// Discard the contents of the depth stencil.
-		context_->DiscardView(depth_stencil_view_.get());
+		//context_->DiscardView(depth_stencil_view_.get());
 
 		if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) { HandleDeviceLost(); }
 		else { winrt::check_hresult(hr); }
