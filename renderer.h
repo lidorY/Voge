@@ -7,17 +7,36 @@ class Renderer :public std::enable_shared_from_this<Renderer> {
 public:
 	void Render();
 
-	void CreateDeviceDependentResources();
-	void CreateWindowSizeDependentResources();
-	void ReleaseDeviceDependentResources();
+	void CreateDeviceDependentResources() {}
+	void CreateWindowSizeDependentResources() {
+		auto context = device_resources_->GetD3DDeviceContext();
+		auto render_target_size = device_resources_->GetRenderTargetSize();
+
+		auto bounds = device_resources_->GetLogicalSize();
+
+
+	}
+	void ReleaseDeviceDependentResources() {}
 
 #if defined(DEBUG) || defined(_DEBUG)
-	void ReportLiveObjects();
+	void ReportLiveObjects() {
+		winrt::com_ptr<ID3D11Device3> device;
+		device = device_resources_->GetD3DDevice();
+		auto debug_layer = device.try_as<ID3D11Debug>();
+		if (debug_layer) {
+			winrt::check_hresult(
+				debug_layer->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL)
+			);
+		}
+	}
 #endif
 
 	Renderer(std::shared_ptr<DeviceResources> const& dr) :
 	device_resources_(dr)
-	{}
+	{
+		CreateDeviceDependentResources();
+		CreateWindowSizeDependentResources();
+	}
 
 
 private:
