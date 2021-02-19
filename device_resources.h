@@ -166,6 +166,7 @@ public:
 
 	// D3D Accessors.
 	//winrt::com_ptr<ID3D11Device> const& GetD3DDevice() const { return mdevice_; }
+	winrt::com_ptr<ID3D11Device3> const& GetD3DDevice() const { return mdevice_; }
 	ID3D11DeviceContext3* GetD3DDeviceContext() const { return context_.get(); }
 	IDXGISwapChain1* GetSwapChain() const { return swap_chain_.get(); }
 	D3D_FEATURE_LEVEL       GetDeviceFeatureLevel() const { return feature_level_; }
@@ -387,7 +388,7 @@ private:
 
 
 	// Direct3D objects.
-	winrt::com_ptr<ID3D11Device2> mdevice_;
+	winrt::com_ptr<ID3D11Device3> mdevice_;
 	winrt::com_ptr<ID3D11DeviceContext3> context_;
 	winrt::com_ptr<IDXGISwapChain1> swap_chain_;
 
