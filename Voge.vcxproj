@@ -115,9 +115,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="constant_buffers.h" />
     <ClInclude Include="device_resources.h" />
     <ClInclude Include="engine.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="renderer.h" />
   </ItemGroup>
