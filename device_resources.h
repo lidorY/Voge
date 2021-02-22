@@ -165,7 +165,6 @@ public:
 	float GetDpi() const { return dpi_; }
 
 	// D3D Accessors.
-	//winrt::com_ptr<ID3D11Device> const& GetD3DDevice() const { return mdevice_; }
 	winrt::com_ptr<ID3D11Device3> const& GetD3DDevice() const { return mdevice_; }
 	ID3D11DeviceContext3* GetD3DDeviceContext() const { return context_.get(); }
 	IDXGISwapChain1* GetSwapChain() const { return swap_chain_.get(); }
@@ -173,6 +172,9 @@ public:
 	ID3D11RenderTargetView* GetBackBufferRenderTargetView() const { return render_target_view_.get(); }
 	ID3D11DepthStencilView* GetDepthStencilView() const { return depth_stencil_view_.get(); }
 	D3D11_VIEWPORT          GetScreenViewport() const { return screen_viewport_; }
+	DirectX::XMFLOAT4X4     GetOrientationTransform3D() const { 
+		// TODO: Since im not using other orientation, might this is redundant?
+		return orientation_transform3d_; }
 
 private:
 	// Device creation and initialization inner methods
