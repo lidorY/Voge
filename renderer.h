@@ -1,11 +1,13 @@
 #pragma once
 #include <memory>
+#include <winrt/Windows.Foundation.h>
 
 #include "device_resources.h"
 #include "constant_buffers.h"
 #include "game.h"
+#include "loader.h"
 
-class Renderer :public std::enable_shared_from_this<Renderer> {
+class Renderer : public std::enable_shared_from_this<Renderer> {
 public:
 	void Render();
 
@@ -55,7 +57,65 @@ public:
 
 		auto device = device_resources_->GetD3DDevice();
 
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+
+		// Create the constant buffers.
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bd.CPUAccessFlags = 0;
+		// TODO: Why all this "math" here..?
+		bd.ByteWidth = (sizeof(ConstantBufferNeverChanges) + 15) / 16 * 16;
+		never_changing_cbuffer_ = nullptr;
+		winrt::check_hresult(
+			device->CreateBuffer(&bd, nullptr, never_changing_cbuffer_.put())
+		);
+
+		bd.ByteWidth = (sizeof(ConstantBufferChangeOnResize) + 15) / 16 * 16;
+		resize_changing_cbuffer_ = nullptr;
+		winrt::check_hresult(
+			device->CreateBuffer(&bd, nullptr, resize_changing_cbuffer_.put())
+		);
+
+		bd.ByteWidth = (sizeof(ConstantBufferChangesEveryFrame) + 15) / 16 * 16;
+		frame_changing_cbuffer_ = nullptr;
+		winrt::check_hresult(
+			device->CreateBuffer(&bd, nullptr, frame_changing_cbuffer_.put())
+		);
+
+		bd.ByteWidth = (sizeof(ConstantBufferChangesEveryPrim) + 15) / 16 * 16;
+		primitive_changing_cbuffer_ = nullptr;
+		winrt::check_hresult(
+			device->CreateBuffer(&bd, nullptr, primitive_changing_cbuffer_.put())
+		);
+
+		// Setting up sampler 
+		// TODO: currently i'm not supporting Textures...
+
+		// Start the async tasks to load the shaders and textures.
+		Loader loader{ device };
+
+		std::vector<winrt::Windows::Foundation::IAsyncAction> tasks;
+		
+		uint32_t numElements = ARRAYSIZE(PNVertexLayout);
+		
+		tasks.push_back(loader.LoadShaderAsync(
+			L"VertexShader.cso",
+			PNVertexLayout, 
+			numElements, 
+			vertex_shader_.put(),
+			vertex_layout_.put()));
+
+		tasks.push_back(loader.LoadShaderAsync(
+			L"PixelShader.cso", 
+			pixel_shader_.put()));
+
+		// Wait for all the tasks to complete.
+		for (auto&& task : tasks) {
+			co_await task;
+		}
 	}
+
 	void FinalizeCreateGameDeviceResources();
 
 #if defined(DEBUG) || defined(_DEBUG)
