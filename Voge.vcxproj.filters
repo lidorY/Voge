@@ -4,6 +4,8 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="device_resources.cpp" />
+    <ClCompile Include="BasicReaderWriter.cpp" />
+    <ClCompile Include="loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -13,6 +15,8 @@
     <ClInclude Include="constant_buffers.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="loader.h" />
+    <ClInclude Include="BasicReaderWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

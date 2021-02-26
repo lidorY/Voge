@@ -115,11 +115,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BasicReaderWriter.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="constant_buffers.h" />
     <ClInclude Include="device_resources.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="loader.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="renderer.h" />
   </ItemGroup>
@@ -139,7 +141,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="BasicReaderWriter.cpp" />
     <ClCompile Include="device_resources.cpp" />
+    <ClCompile Include="loader.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
