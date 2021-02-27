@@ -28,7 +28,6 @@ public:
         return DirectX::XMLoadFloat4x4(&projection_matrix_);
     }
 
-private:
     void SetViewParams(
         _In_ DirectX::XMFLOAT3 eye,
         _In_ DirectX::XMFLOAT3 lookAt,
@@ -83,6 +82,7 @@ private:
         );
     }
 
+private:
     DirectX::XMFLOAT3 eye_;
     DirectX::XMFLOAT3 look_at_;
     DirectX::XMFLOAT3 up_;

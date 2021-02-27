@@ -89,7 +89,7 @@ public:
 			if (visible_) {
 				dispatcher.ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 				Update();
-				// TODO: renderer_->Render();
+				renderer_->Render();
 				device_resources_->Present();
 				render_needed_ = false;
 			}
